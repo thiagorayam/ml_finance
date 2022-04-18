@@ -6,8 +6,8 @@ import plotly.graph_objs as go
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 
-def st_test():
-    #argumentos de entrada no app
+def get_market_data():
+
     tickers_arg = st.sidebar.text_input("What is the ticker? ")
     st.write("Ticker:", tickers_arg)
     period_arg = st.sidebar.text_input("What is the period? ")
@@ -17,13 +17,20 @@ def st_test():
 
     st.write("Getting data from "+tickers_arg)
 
-    tickers_arg = 'UBER'
-    period_arg = '5d'
-    interval_arg = '1d'
+    continue_if = (tickers_arg!="") and (period_arg!="") and (interval_arg!="")
 
-    df = yf.download(tickers=tickers_arg, peiod=period_arg, interval=interval_arg)
+    if continue_if:
+        df = yf.download(tickers=tickers_arg, peiod=period_arg, interval=interval_arg)
+        st.line_chart(df[['Open','High','Low','Close']])
+        return df
 
-    st.write(df['Open'])
+def main():
 
-st_test()
+    data = None
+    data = get_market_data()
 
+    if data is not None:
+        return None
+        #ESCREVER AQUI TODA A ANALISE
+
+main()
