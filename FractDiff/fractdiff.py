@@ -78,7 +78,7 @@ def plotMemoryVsCorr(result, seriesName):
     ax2 = ax.twinx()  
     color1='xkcd:deep red'; color2='xkcd:cornflower blue'
     ax.plot(result.order,result['adf'],color=color1)
-    ax.plot(result.order, result['5%'], color='xkcd:slate')
+    ax.plot(result.order, result['1%'], color='xkcd:slate')
     ax2.plot(result.order,result['corr'], color=color2)
     ax.set_xlabel('order of differencing')
     ax.set_ylabel('adf', color=color1);ax.tick_params(axis='y', labelcolor=color1)
@@ -92,13 +92,13 @@ def MemoryVsCorr(series, dRange, numberPlots, lag_cutoff, seriesName):
     
     interval=np.linspace(dRange[0], dRange[1],numberPlots)
     result=pd.DataFrame(np.zeros((len(interval),4)))
-    result.columns = ['order','adf','corr', '5%']
+    result.columns = ['order','adf','corr', '1%']
     result['order']=interval
     for counter,order in enumerate(interval):
         seq_traf=ts_differencing(series,order,lag_cutoff)
         res=adfuller(seq_traf, maxlag=1, regression='c') #autolag='AIC'
         result.loc[counter,'adf']=res[0]
-        result.loc[counter,'5%']=res[4]['5%']
+        result.loc[counter,'1%']=res[4]['1%']
         result.loc[counter,'corr']= np.corrcoef(series[lag_cutoff:].fillna(0),seq_traf)[0,1]
     plotMemoryVsCorr(result, seriesName)    
     return result
