@@ -24,26 +24,27 @@ def plot_label(close,label):
     plt.grid()
     plt.show()
 
-def plot_label_v2(close,label,name):
-    
+def plot_label_v2(close,label,name,size_):
+
+    plt.rcParams['xtick.labelsize'] = size_
+    plt.rcParams['ytick.labelsize'] = size_   
     plt.figure(figsize = (20,10))
     plt.plot(close,color='k',label=name)
 
     # long position
     long_cond = close.index.isin(label[(label==1)].index)
     plt.plot(close[long_cond].index, close[long_cond], '^',
-                markersize = 15, color='g', label='Compra')
+                markersize = size_, color='g', label='Compra')
 
     # short position
     short_cond = close.index.isin(label[(label==-1)].index)
     plt.plot(close[short_cond].index, close[short_cond], 'v',
-                markersize = 15, color='r', label='Venda')
+                markersize = size_, color='r', label='Venda')
                 
-    plt.xlabel('Data', fontsize = 15 )
-    plt.legend()
+    plt.xlabel('Data', fontsize = size_ )
+    plt.legend( fontsize = size_ )
     plt.grid()
     plt.show()
-
 
 def plot_position(df,start,end,s1=None, s2=None):
     
