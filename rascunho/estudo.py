@@ -119,7 +119,7 @@ df.groupby('Label')['Close_diff'].count()
 data_ = df.copy()
 data_.index.name = 'Data'
 data_['Fechameneto'] = data_['Close']
-plot_label_v2(df['Close'][0:40],df['Label'][0:40],'Preço PETR4 (R$)',15)
+plt_lb.plot_label_v2(df['Close'][0:40],df['Label'][0:40],'Preço PETR4 (R$)',15)
 
 #df = df[['High','Low','Open','Close','Close_diff','momentum_stoch_rsi','Close_diff_1', 'Close_diff_2','Label']]
 #df = df[['High','Low','Open','Close','Close_diff','momentum_stoch_rsi','volatility_kcp','Close_diff_1', 'Close_diff_2','Label']]

@@ -100,5 +100,5 @@ def MemoryVsCorr(series, dRange, numberPlots, lag_cutoff, seriesName):
         result.loc[counter,'adf']=res[0]
         result.loc[counter,'1%']=res[4]['1%']
         result.loc[counter,'corr']= np.corrcoef(series[lag_cutoff:].fillna(0),seq_traf)[0,1]
-    plotMemoryVsCorr(result, seriesName)    
+    #plotMemoryVsCorr(result, seriesName)    
     return result

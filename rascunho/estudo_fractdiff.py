@@ -12,7 +12,7 @@ import vectorbt as vbt
 import seaborn as sns
 import ta
 #https://technical-analysis-library-in-python.readthedocs.io/en/latest/
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.metrics import confusion_matrix, accuracy_score
 from imblearn.under_sampling import RandomUnderSampler 
 
@@ -51,20 +51,20 @@ def pred_prob(forest,X,p=0.50):
 #
 start_date = "2006-08-01"
 end_date = "2022-12-01"
-PETR4 =  yf.download(["PETR4.SA"],start_date,end_date)
+ITSA4 =  yf.download(["ITSA4.SA"],start_date,end_date)
 
-list_year = [2016,2018,2018,2019,2020,2021]
+list_year = [2017,2018,2019,2020,2021]
 
-year = 2016
+df__ = pd.DataFrame()
 
-for year in [2016,2017,2018,2019,2020,2021]:
+for year in list_year:
 
-    first_date = PETR4.index>=datetime.datetime(year-10,1,1)
-    last_date = PETR4.index<datetime.datetime(year+1,1,1)
+    first_date = ITSA4.index>=datetime.datetime(year-10,1,1)
+    last_date = ITSA4.index<datetime.datetime(year+1,1,1)
     #
 
-    df = PETR4[first_date & last_date]
-    df.name = 'PETR4'
+    df = ITSA4[first_date & last_date]
+    df.name = 'ITSA4'
 
     adf_test = fdiff.MemoryVsCorr(df['Close'], [0,1], 20, 10, 'Close')
     d=adf_test[adf_test['adf']<=adf_test['1%'].min()]['order'].min()
@@ -129,21 +129,37 @@ for year in [2016,2017,2018,2019,2020,2021]:
     print(confusion_matrix(y_train, y_pred_t1))
 
     print('Test')
-    y_pred_t2 =  pred_prob(forest,X_test,p=0.5) #forest.predict(X_test)
+    y_pred_t2 =  forest.predict(X_test) #pred_prob(forest,X_test,p=0.65)
     print(accuracy_score(y_test, y_pred_t2))
     print(confusion_matrix(y_test, y_pred_t2))
 
     print('Teste*')
-    y_pred_t_ =  pred_prob(forest,X_,p=0.5) #forest.predict(X_)
+    y_pred_t_ =  forest.predict(X_) #pred_prob(forest,X_,p=0.65)
     print(accuracy_score(y_, y_pred_t_))
     print(confusion_matrix(y_, y_pred_t_))
 
     df_['Signal'] = buy_sell_position(np.array(y_pred_t_))
     df_['Label_pred_'] = y_pred_t_ 
 
-    entries = df_['Signal']==1
-    exits = df_['Signal']==-1
-    pf = vbt.Portfolio.from_signals(df_['Close'], entries, exits)
-    print('Modelo:')
-    print(pf.total_return())
-    pf.plot()
+    df__ = pd.concat([df__,df_])
+
+df_ = df__.drop_duplicates()
+df_['Signal'] = buy_sell_position(np.array(df_['Label_pred_']))
+plt_lb.plot_label(df_['Close'],df_['Label_pred_'])
+plt_lb.plot_label(df_['Close'],df_['Signal'])
+plt_lb.plot_label(df_['Close'],df_['Label'])
+
+entries = df_['Signal']==1
+exits = df_['Signal']==-1
+pf = vbt.Portfolio.from_signals(df_['Close'], entries, exits)
+print('Modelo:')
+print(pf.total_return())
+pf.plot()
+
+entries[1:] = False
+entries[0] = True
+exits[:] = False
+pf = vbt.Portfolio.from_signals(df_['Close'], entries, exits)
+print('Modelo:')
+print(pf.total_return())
+pf.plot()
