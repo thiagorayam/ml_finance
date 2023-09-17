@@ -26,14 +26,14 @@ class Labeling:
             left_barrier = self.value[win_start:win_end].iloc[0]
             right_barrier = self.value[win_start:win_end].iloc[-1]
 
-            if min_value < left_barrier and min_value < right_barrier:
+            if max_value > left_barrier and max_value > right_barrier:
                 label.loc[idx_max] = -1
 
-            if max_value > left_barrier and max_value > right_barrier:
+            if min_value < left_barrier and min_value < right_barrier:
                 label.loc[idx_min] = 1
 
-            win_start = int((win_end + win_start)/d)
+            win_start = win_start + int((win_end - win_start)/d)
             win_end = win_start + window
             count_row = win_end
-
+            
         return label
