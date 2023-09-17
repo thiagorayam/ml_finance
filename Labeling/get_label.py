@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import statsmodels.api as sm1
 
+
 class Labeling:
 
     def __init__(self, value):
